@@ -1,6 +1,6 @@
 # Aequalis
 
-Aplicativo desktop para gravar curvas de equalização no DSP do fone USB-C Kuba Auri. O nome exibido no aplicativo é **Aequalis**.
+Aplicativo desktop para gravar curvas de equalização no DSP do fone USB-C Kuba Auri.
 
 Este projeto foi baseado no funcionamento e nos conceitos do equalizador web oficial da Kuba:
 
@@ -119,28 +119,35 @@ npm run build
 
 ### Publicar uma release no GitHub
 
-Depois de gerar o instalador, crie uma tag e publique a release usando o GitHub
-CLI. É necessário estar autenticado com `gh auth login` e ter o repositório
-remoto configurado:
+As releases são geradas automaticamente pelo GitHub Actions sempre que uma tag
+no formato `vMAJOR.MINOR.PATCH` é enviada ao repositório. O workflow gera o
+instalador do Windows e publica na release os arquivos `.exe`, `.blockmap` e
+`latest.yml`.
+
+Para criar uma nova versão, use o comando correspondente ao tipo da alteração.
+O npm atualiza o `package.json` e o `package-lock.json`, cria o commit e cria a
+tag automaticamente:
 
 ```powershell
-gh auth login
-gh release create v1.0.0 `
-  --title "Aequalis v1.0.0" `
-  --generate-notes `
-  .\dist\*.exe
+npm run release:patch
+# ou: npm run release:minor
+# ou: npm run release:major
+git push --follow-tags
 ```
 
-Para novas versões, use o comando correspondente ao tipo da alteração. O npm
-atualiza o `package.json`, cria o commit e cria a tag automaticamente:
+Depois do `git push --follow-tags`, acesse a aba **Actions** do repositório para
+acompanhar o build. Ao terminar, a release estará disponível na aba
+**Releases**.
+
+Exemplo para uma nova versão minor:
 
 ```powershell
 npm run release:minor
 git push --follow-tags
-$env:CSC_IDENTITY_AUTO_DISCOVERY="false"
-npm run build
-gh release create v1.1.0 --title "Aequalis v1.1.0" --generate-notes .\dist\*.exe
 ```
+
+Para gerar o instalador manualmente no computador local, consulte a seção
+[Build do instalador](#build-do-instalador).
 
 ## Instalação
 
