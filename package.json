@@ -1,13 +1,16 @@
 {
-  "name": "kuba-equalizador-desktop",
-  "productName": "Kuba Equalizador",
+  "name": "aequalis-equalizador",
+  "productName": "Aequalis Equalizador",
   "version": "1.0.0",
   "description": "Equalizador desktop para o fone USB-C Kuba Auri - grava curvas de frequência no DSP via HID",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dev": "electron .",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "release:patch": "npm version patch",
+    "release:minor": "npm version minor",
+    "release:major": "npm version major"
   },
   "keywords": [
     "equalizer",

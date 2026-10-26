@@ -25,28 +25,30 @@ O app web original usa a **WebHID API** (`navigator.hid`) para enviar os coefici
 
 Não é processamento de áudio em tempo real: o app grava a curva de EQ na memória do fone, e o fone aplica a equalização por conta própria.
 
-## Requisitos
+## Desenvolvimento
+
+### Requisitos
 
 - Node.js instalado
 - Windows, macOS ou Linux
 - Google Chrome ou Edge (para o app web original) – não necessário para este desktop
 - Fone Kuba Auri conectado via USB-C
 
-## Instalação
+### Preparar o ambiente
 
 Abra o terminal na pasta do projeto:
 
 ```powershell
-cd "$env:USERPROFILE\Desktop\kuba-desktop-eq"
+cd "$env:USERPROFILE\OneDrive\Documentos\aequalis-desktop-eq"
 npm install
 ```
 
 Se o `npm install` falhar por timeout de rede, tente novamente ou verifique sua conexão.
 
-## Execução
+### Executar em modo de desenvolvimento
 
 ```powershell
-cd "$env:USERPROFILE\Desktop\kuba-desktop-eq"
+cd "$env:USERPROFILE\OneDrive\Documentos\aequalis-desktop-eq"
 npm start
 ```
 
@@ -55,6 +57,100 @@ Ou diretamente:
 ```powershell
 npx electron .
 ```
+
+### Versionamento semântico
+
+As versões seguem o padrão [Semantic Versioning](https://semver.org/lang/pt-BR/):
+`MAJOR.MINOR.PATCH`.
+
+- `PATCH` (`1.0.1`): correções compatíveis.
+- `MINOR` (`1.1.0`): novas funcionalidades compatíveis.
+- `MAJOR` (`2.0.0`): mudanças incompatíveis.
+
+O campo `version` do `package.json` é a fonte da versão do aplicativo. Para
+atualizar a versão e criar o commit correspondente:
+
+```powershell
+npm run release:patch
+# ou: npm run release:minor
+# ou: npm run release:major
+git push --follow-tags
+```
+
+### Build do instalador
+
+Para gerar o instalador do Windows localmente:
+
+```powershell
+npm install
+$env:CSC_IDENTITY_AUTO_DISCOVERY="false"
+npm run build
+```
+
+Os arquivos gerados ficam na pasta `dist`. O instalador normalmente terá um nome
+semelhante a `Kuba Equalizador Setup 1.0.0.exe`.
+
+O instalador não é assinado digitalmente. Por isso, o Windows pode exibir um
+aviso do SmartScreen durante a instalação. Esse aviso é esperado para builds
+distribuídos sem um certificado de assinatura.
+
+### Erro de links simbólicos no Windows
+
+Se o build falhar com `Cannot create symbolic link` ou `O cliente não tem o
+privilégio necessário`, o Windows não permitiu que o Electron Builder extraísse
+o componente de assinatura. Tente uma destas opções:
+
+1. Ative o **Modo de desenvolvedor** em **Configurações > Sistema > Para
+   desenvolvedores** e execute o build novamente.
+2. Abra o PowerShell como administrador e execute:
+
+   ```powershell
+   $env:CSC_IDENTITY_AUTO_DISCOVERY="false"
+   npm run build
+   ```
+
+Se o erro persistir, limpe somente o cache do componente e tente novamente:
+
+```powershell
+Remove-Item -Recurse -Force "$env:LOCALAPPDATA\electron-builder\Cache\winCodeSign"
+$env:CSC_IDENTITY_AUTO_DISCOVERY="false"
+npm run build
+```
+
+### Publicar uma release no GitHub
+
+Depois de gerar o instalador, crie uma tag e publique a release usando o GitHub
+CLI. É necessário estar autenticado com `gh auth login` e ter o repositório
+remoto configurado:
+
+```powershell
+gh auth login
+gh release create v1.0.0 `
+  --title "Aequalis v1.0.0" `
+  --generate-notes `
+  .\dist\*.exe
+```
+
+Para novas versões, use o comando correspondente ao tipo da alteração. O npm
+atualiza o `package.json`, cria o commit e cria a tag automaticamente:
+
+```powershell
+npm run release:minor
+git push --follow-tags
+$env:CSC_IDENTITY_AUTO_DISCOVERY="false"
+npm run build
+gh release create v1.1.0 --title "Aequalis v1.1.0" --generate-notes .\dist\*.exe
+```
+
+## Instalação
+
+Para instalar o Aequalis, abra a página **Releases** do repositório no GitHub e
+baixe o instalador `.exe` da versão desejada. Execute o arquivo baixado e siga
+as instruções do instalador.
+
+Os instaladores distribuídos atualmente não são assinados digitalmente. Por
+isso, o Windows pode exibir um aviso do SmartScreen. Nesse caso, confirme que o
+arquivo foi baixado da página oficial de releases antes de prosseguir.
 
 ## Funcionalidades
 
