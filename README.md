@@ -124,6 +124,10 @@ no formato `vMAJOR.MINOR.PATCH` é enviada ao repositório. O workflow gera o
 instalador do Windows e publica na release os arquivos `.exe`, `.blockmap` e
 `latest.yml`.
 
+O workflow desativa a publicação automática do Electron Builder durante o build
+e publica os arquivos em uma etapa separada. Isso evita que o builder tente
+criar a release antes de o instalador estar pronto.
+
 Para criar uma nova versão, use o comando correspondente ao tipo da alteração.
 O npm atualiza o `package.json` e o `package-lock.json`, cria o commit e cria a
 tag automaticamente:
