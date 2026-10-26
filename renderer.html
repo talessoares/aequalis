@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aequalis</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div>
+        <h1><strong>Aequalis</strong></h1>
+        <p class="subtitle">Equalize seu fone diretamente no DSP.</p>
+      </div>
+      <div class="header-actions">
+        <button id="settingsBtn" class="icon-btn" title="Configurações" aria-label="Configurações"><img src="settings-icon.png" alt="" aria-hidden="true"></button>
+        <button id="aboutBtn" class="icon-btn" title="Sobre o Aequalis" aria-label="Sobre o Aequalis"><img src="info-icon.png" alt="" aria-hidden="true"></button>
+        <div class="conn-status" id="connStatus">
+          <span class="dot" id="connDot"></span>
+          <span id="connLabel">Cabo desconectado</span>
+        </div>
+        <button id="connectBtn" class="btn btn-primary">Verificar conexão</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="device-section">
+        <div class="section-kicker">Seu fone</div>
+        <div class="seg" id="modelSeg"></div>
+      </section>
+
+      <section class="panel graph-panel">
+        <div class="graph-heading">
+          <div>
+            <div class="graph-model" id="detailName">Auri</div>
+            <div class="graph-subtitle" id="detailDesc">A assinatura do Auri, inspirada pela comunidade.</div>
+          </div>
+          <div class="graph-target">Alvo <strong id="graphTarget">JM-1</strong></div>
+        </div>
+        <canvas id="eqCanvas" width="900" height="420"></canvas>
+        <div class="graph-legend"><span id="graphLegend">Curva selecionada</span><span class="legend-zero"></span><span>0 dB</span></div>
+      </section>
+
+      <section class="curves-section">
+        <div class="section-heading">
+          <div class="section-kicker">Curvas de preferência</div>
+          <div class="curve-actions">
+            <span class="section-hint">Clique nas curvas para comparar. Selecione apenas uma para aplicar no fone.</span>
+            <button id="customCurveBtn" class="btn btn-outline btn-small">Criar curva</button>
+            <button id="importCurveBtn" class="btn btn-outline btn-small">Importar</button>
+            <button id="exportCurveBtn" class="btn btn-outline btn-small">Exportar</button>
+          </div>
+        </div>
+        <div class="preset-list" id="presetList"></div>
+      </section>
+
+      <section class="reference-section">
+        <div class="section-heading reference-heading">
+          <div class="section-kicker">Curvas de referência</div>
+          <span>JM-1 · Harman IE 2019 · VDSF · Etymotic</span>
+        </div>
+        <div class="reference-grid">
+          <button class="reference-card" data-curve-id="referencia"><strong>JM-1</strong><span>Sonoridade fiel à JM-1.</span></button>
+          <button class="reference-card" data-curve-id="harman"><strong>Harman IE 2019</strong><span>A curva de preferência mais estudada do mundo.</span></button>
+          <button class="reference-card" data-curve-id="vdsf"><strong>VDSF</strong><span>Meio-termo entre campo difuso e Harman, com graves discretos.</span></button>
+          <button class="reference-card" data-curve-id="etymotic"><strong>Etymotic</strong><span>Graves contidos e muita definição nos médios e agudos.</span></button>
+        </div>
+        <p class="reference-note">A rigor, algumas destas também são curvas de preferência. A Harman, por exemplo, nasceu de pesquisas sobre o som que a maioria das pessoas prefere. Elas estão nesta categoria porque é assim que a comunidade de áudio as usa: como régua para comparar fones.</p>
+        <p class="reference-note">Funciona no Chrome ou Edge de computador (Windows, Mac ou Linux). Celulares, tablets e o Safari não acessam o cabo, apesar de alguns navegadores exibirem a opção.</p>
+      </section>
+
+      <section class="apply-bar">
+        <div>
+          <div class="selected-label">Selecionado</div>
+          <div class="selected-value" id="selectedCurve">Auri</div>
+          <div class="selected-pre">Pré-amplificador: <span id="detailPre"></span> dB</div>
+        </div>
+        <button id="applyBtn" class="btn btn-apply" disabled>Aplicar no fone</button>
+        <div id="confirmBox" class="confirm-box" style="display:none">
+          <div class="confirm-text" id="confirmText"></div>
+          <div class="confirm-actions">
+            <button id="confirmNo" class="btn btn-outline">Não</button>
+            <button id="confirmYes" class="btn btn-danger">Sim, gravar</button>
+          </div>
+        </div>
+        <div id="status" class="status"></div>
+        <div id="writeProgress" class="write-progress" aria-live="polite">
+          <div id="writeProgressLabel" class="write-progress-label">Preparando gravação...</div>
+          <div class="write-progress-track"><div id="writeProgressBar" class="write-progress-bar"></div></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="custom-modal" id="customModal" hidden>
+      <div class="custom-dialog">
+        <div class="custom-dialog-header">
+          <div>
+            <div class="graph-model">Curva personalizada</div>
+            <div class="graph-subtitle">Configure as 10 bandas enviadas ao DSP.</div>
+          </div>
+
+          <button id="customClose" class="modal-close" aria-label="Fechar">×</button>
+        </div>
+        <div class="custom-fields">
+          <label>Nome da curva<input id="customName" type="text" maxlength="32" value="Minha curva"></label>
+          <label>Pré-amplificador (dB)<input id="customPre" type="number" min="-24" max="12" step="0.1" value="0"></label>
+        </div>
+        <div class="band-grid" id="bandGrid"></div>
+        <div class="custom-dialog-actions">
+          <div id="customError" class="custom-error"></div>
+          <button id="customCancel" class="btn btn-outline">Cancelar</button>
+          <button id="customSave" class="btn btn-primary">Salvar curva</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-modal" id="settingsModal" hidden>
+      <div class="settings-dialog">
+        <div class="custom-dialog-header">
+          <div>
+            <div class="graph-model">Configurações</div>
+            <div class="graph-subtitle">Escolha como o Aequalis se comporta ao fechar.</div>
+          </div>
+          <button id="settingsClose" class="modal-close" aria-label="Fechar">×</button>
+        </div>
+        <label class="setting-toggle">
+          <input id="closeToTray" type="checkbox">
+          <span>
+            <strong>Continuar na bandeja ao fechar</strong>
+            <small>O botão X oculta o app. Use o menu da bandeja para reabrir ou sair.</small>
+          </span>
+        </label>
+        <label class="setting-toggle">
+          <input id="darkMode" type="checkbox">
+          <span>
+            <strong>Modo escuro</strong>
+            <small>Use uma versão escura da paleta do Aequalis.</small>
+          </span>
+        </label>
+        <div class="settings-section">
+          <div class="settings-section-title">Sons</div>
+          <label class="setting-toggle">
+            <input id="uiSounds" type="checkbox">
+            <span>
+              <strong>Sons da interface</strong>
+              <small>Reproduzir um som sutil ao clicar nos botões.</small>
+            </span>
+          </label>
+          <label class="setting-toggle">
+            <input id="successSound" type="checkbox">
+            <span>
+              <strong>Som de sucesso</strong>
+              <small>Confirmar com um som quando a curva for gravada no cabo.</small>
+            </span>
+          </label>
+          <label class="volume-setting">
+            <span>Volume dos sons</span>
+            <input id="soundVolume" type="range" min="0" max="100" step="1">
+          </label>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">Histórico de gravações</div>
+          <div id="historyList" class="history-list"></div>
+          <button id="clearHistory" class="btn btn-outline btn-small">Limpar histórico</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-modal" id="aboutModal" hidden>
+      <div class="settings-dialog about-dialog">
+        <div class="custom-dialog-header">
+          <div>
+            <div class="graph-model">Sobre o Aequalis</div>
+            <div class="graph-subtitle">Equalização diretamente no DSP do fone.</div>
+          </div>
+          <button id="aboutClose" class="modal-close" aria-label="Fechar">×</button>
+        </div>
+        <div class="about-content">
+          <section class="about-section">
+            <h3>O aplicativo</h3>
+            <p><strong>Aequalis</strong> é um aplicativo independente criado por Tales.</p>
+            <p>Equalize seu fone diretamente no DSP, sem processamento de áudio em tempo real.</p>
+            <p>Versão <strong id="appVersion">carregando...</strong> · <a href="https://github.com/talessoares/kuba-desktop-eq/releases" data-external-link>Ver atualizações</a></p>
+          </section>
+          <section class="about-section">
+            <h3>Quem criou</h3>
+            <p>Encontre o criador no <a href="https://github.com/talessoares" data-external-link>GitHub</a> e no <a href="https://www.linkedin.com/in/tales-schifelbein-soares/" data-external-link>LinkedIn</a>.</p>
+          </section>
+          <section class="about-section">
+            <h3>Referências e créditos Kuba</h3>
+            <p>Este projeto foi inspirado pelo <a href="https://equalizador.kuba.audio/" data-external-link>equalizador.kuba.audio</a> e pelo trabalho da <a href="https://kuba.audio/" data-external-link>Kuba Audio</a>.</p>
+            <p>Aequalis não é um produto oficial da Kuba. Os créditos da Kuba permanecem associados aos seus respectivos produtos, marcas e referências.</p>
+          </section>
+          <section class="about-section">
+            <h3>Recursos utilizados</h3>
+            <p>Ícones da interface: <a href="https://www.flaticon.com/free-icon/setting_2956788" data-external-link>Settings</a> e <a href="https://www.flaticon.com/free-icon/info_471662" data-external-link>Info</a>, por Flaticon. O ícone do aplicativo é o <a href="https://www.flaticon.com/free-icon/letter-a_3665883" data-external-link>Letter A</a>.</p>
+            <p>Desenvolvimento com auxílio de <a href="https://github.com/features/copilot" data-external-link>GitHub Copilot</a> e <a href="https://cline.bot/" data-external-link>Cline</a>.</p>
+          </section>
+          <section class="about-section">
+            <h3>Licença</h3>
+            <p>Software distribuído sob a <a href="https://opensource.org/license/mit/" data-external-link>licença MIT</a>.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      Aequalis &bull; Usa HID para gravar o DSP do fone &bull; Não processa áudio em tempo real
+    </footer>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

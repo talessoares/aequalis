@@ -1,0 +1,32 @@
+{
+  "name": "kuba-equalizador-desktop",
+  "productName": "Kuba Equalizador",
+  "version": "1.0.0",
+  "description": "Equalizador desktop para o fone USB-C Kuba Auri - grava curvas de frequência no DSP via HID",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [
+    "equalizer",
+    "audio",
+    "kuba",
+    "auri",
+    "hid",
+    "usb"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.0.0"
+  },
+  "dependencies": {
+    "node-hid": "^2.1.1"
+  },
+  "allowScripts": {
+    "electron@28.3.3": true
+  }
+}

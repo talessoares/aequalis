@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Electron Builder output
+dist/
+release/
+out/
+
+# Runtime and debug logs
+*.log
+logs/
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
