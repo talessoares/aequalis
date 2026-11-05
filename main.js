@@ -158,6 +158,16 @@ let isQuitting = false;
 let closeToTray = true;
 let trayCurves = [];
 
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", () => {
+    showWindow();
+  });
+}
+
 function createTray() {
   if (tray) return;
   tray = new Tray(nativeImage.createFromPath(path.join(__dirname, "icon.png")));
@@ -241,11 +251,13 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => {
-  Menu.setApplicationMenu(null);
-  createTray();
-  createWindow();
-});
+if (gotTheLock) {
+  app.whenReady().then(() => {
+    Menu.setApplicationMenu(null);
+    createTray();
+    createWindow();
+  });
+}
 
 app.on("window-all-closed", () => {
   if ((isQuitting || !closeToTray) && process.platform !== "darwin") app.quit();
