@@ -1,7 +1,7 @@
 {
   "name": "aequalis-equalizador",
   "productName": "Aequalis Equalizador",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Equalizador desktop para o fone USB-C Kuba Auri - grava curvas de frequência no DSP via HID",
   "main": "main.js",
   "scripts": {
