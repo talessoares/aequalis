@@ -9,6 +9,28 @@ Este projeto foi baseado no funcionamento e nos conceitos do equalizador web ofi
 
 O Aequalis é uma implementação desktop independente, criada com Electron e `node-hid`. Não é um produto oficial da Kuba nem substitui os sites acima.
 
+## Demonstração
+
+### Aplicativo
+
+![Demonstração do Aequalis](docs/media/aequalis-demo.gif)
+
+### Tela principal
+
+![Tela principal do Aequalis](docs/media/main-screen.png)
+
+### Configurações
+
+![Configurações do Aequalis](docs/media/settings.png)
+
+### Sobre o Aequalis
+
+![Tela Sobre o Aequalis](docs/media/about-dialog.png)
+
+### Menu da bandeja
+
+![Menu da bandeja do Aequalis](docs/media/tray-menu.png)
+
 ## Ícone
 
 O ícone do aplicativo foi obtido do Flaticon:
